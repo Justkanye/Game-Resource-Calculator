@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Game_RSS_Calc",
+    "slug": "Game_RSS_Calc",
+    "scheme": "rss-calc",
+    "version": "1.0.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000106"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.websitesrus.gameRssCalc"
+    },
+    "android": {
+      "package": "com.websitesrus.Game_RSS_Calc"
+    },
+    "web": {
+      "favicon": "./assets/icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b7a05b58-ccb5-4995-8832-3021c2ad260d"
+      }
+    }
+  }
+}

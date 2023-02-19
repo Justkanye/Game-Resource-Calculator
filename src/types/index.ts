@@ -30,6 +30,7 @@ export type RootStackParamList = {
   Edit: {
     gameId: string;
   };
+  NotFound: undefined;
 };
 
 export type MainTabParamList = {

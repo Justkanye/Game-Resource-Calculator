@@ -11,81 +11,90 @@ import {
   DarkTheme,
 } from "react-native-paper";
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";
-import { useCallback } from "react";
-import * as Linking from "expo-linking";
+import { addEventListener } from "expo-linking";
 
-import { Edit, Game } from "../screens";
+import { Edit, Game, NotFound } from "../screens";
 import MainTabs from "./MainTabs";
 import { useSettings } from "../hooks";
 import { RootStackParamList } from "../types";
+import { prefix } from "../constants";
+
+const AppStackNav = createSharedElementStackNavigator<RootStackParamList>();
 
 const AppStack = () => {
-  const AppStackNav = createSharedElementStackNavigator<RootStackParamList>();
   const { colors } = useTheme();
-  const theme = useSettings(state => state.theme);
+  const [theme, inistialState, setInitialState] = useSettings(s => [
+    s.theme,
+    s.inistialState,
+    s.setInitialState,
+  ]);
   const isDark = theme === "dark";
-  const prefix = Linking.createURL("rsscalc://app");
+  // console.log({ prefix });
 
-  return useCallback(
-    () => (
-      <PaperProvider theme={isDark ? DarkTheme : DefaultTheme}>
-        <StatusBar style='light' />
-        <NavigationContainer
-          linking={{
-            prefixes: [prefix],
-            subscribe(listener) {
-              const subscriber = Linking.addEventListener("url", ({ url }) => {
-                console.log({ url });
-                listener(url);
-              });
-              return subscriber.remove;
-            },
-            config: {
-              screens: {
-                Main: "main",
-                Game: {
-                  path: "game/:gameId",
-                  parse: {
-                    gameId: gameId => `${gameId}`,
-                  },
+  return (
+    <PaperProvider theme={isDark ? DarkTheme : DefaultTheme}>
+      <StatusBar style='light' />
+      <NavigationContainer
+        linking={{
+          prefixes: [prefix],
+          subscribe(listener) {
+            const subscriber = addEventListener("url", ({ url }) => {
+              console.log({ url });
+              listener(url);
+            });
+            return subscriber.remove;
+          },
+          config: {
+            screens: {
+              Main: "/",
+              Game: {
+                path: "game/:gameId",
+                parse: {
+                  gameId: gameId => `${gameId}`,
                 },
               },
+              NotFound: "*",
             },
-          }}
-          theme={isDark ? NavDarkTheme : NavLightTheme}
+          },
+        }}
+        theme={isDark ? NavDarkTheme : NavLightTheme}
+        initialState={inistialState}
+        onStateChange={s => s && setInitialState(s)}
+      >
+        <AppStackNav.Navigator
+          screenOptions={() => ({
+            title: "Game Resource Calculator",
+            headerStyle: isDark
+              ? undefined
+              : {
+                  backgroundColor: colors.primary,
+                },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              fontFamily: "YesevaOne-Regular",
+            },
+          })}
         >
-          <AppStackNav.Navigator
-            screenOptions={() => ({
-              title: "Game Resource Calculator",
-              headerStyle: isDark
-                ? undefined
-                : {
-                    backgroundColor: colors.primary,
-                  },
-              headerTintColor: "#fff",
-            })}
-          >
-            <AppStackNav.Screen name='Main' component={MainTabs} />
-            <AppStackNav.Screen
-              name='Game'
-              initialParams={{
-                gameId: undefined,
-              }}
-              component={Game}
-            />
-            <AppStackNav.Screen
-              name='Edit'
-              initialParams={{
-                gameId: undefined,
-              }}
-              component={Edit}
-            />
-          </AppStackNav.Navigator>
-        </NavigationContainer>
-      </PaperProvider>
-    ),
-    [isDark, colors.primary]
-  )();
+          <AppStackNav.Screen name='Main' component={MainTabs} />
+          <AppStackNav.Screen
+            name='Game'
+            initialParams={{
+              gameId: undefined,
+            }}
+            component={Game}
+          />
+          <AppStackNav.Screen
+            name='Edit'
+            initialParams={{
+              gameId: undefined,
+            }}
+            component={Edit}
+          />
+          <AppStackNav.Screen name='NotFound' component={NotFound} />
+        </AppStackNav.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
+  );
 };
 
 export default AppStack;

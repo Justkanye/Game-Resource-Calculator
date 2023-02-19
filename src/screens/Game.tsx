@@ -10,12 +10,13 @@ import {
 import { Button, List, Text, TextInput, useTheme } from "react-native-paper";
 import {
   cacheDirectory,
-  documentDirectory,
   writeAsStringAsync,
+  StorageAccessFramework,
 } from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import * as Linking from "expo-linking";
 
-import { optimizeCount } from "../helpers";
+import { getError, optimizeCount } from "../helpers";
 import { useStore } from "../hooks";
 import { RootStackParamList } from "../types";
 import { Icon, Title } from "../utils";
@@ -71,6 +72,36 @@ const Game: FC<Props> = ({
       ]
     );
 
+  const saveGame = async () => {
+    const permission =
+      await StorageAccessFramework.requestDirectoryPermissionsAsync();
+    if (!permission.granted || !game) return;
+    const uri = await StorageAccessFramework.createFileAsync(
+      permission.directoryUri,
+      game.name + ".json",
+      "application/json"
+    ).catch(e => alert(getError(e)));
+    if (!uri) return;
+    writeAsStringAsync(uri, JSON.stringify(game), {
+      encoding: "utf8",
+    })
+      .then(() => alert("File saved successfully"))
+      .catch(e => alert(getError(e)));
+  };
+
+  const shareGame = () => {
+    if (!game) return;
+    const fileUri = cacheDirectory + game.name + ".json";
+    writeAsStringAsync(fileUri, JSON.stringify(game), {
+      encoding: "utf8",
+    }).then(() =>
+      Sharing.shareAsync(fileUri, {
+        dialogTitle: `Share ${game.name}`,
+        mimeType: "application/json",
+      })
+    );
+  };
+
   useLayoutEffect(() => {
     if (game?.name)
       navigation.setOptions({
@@ -108,22 +139,22 @@ const Game: FC<Props> = ({
       {game ? (
         <View>
           <Title title={game.name} />
-          <Button
-            mode='contained'
-            onPress={() => {
-              const fileUri = cacheDirectory + game.name + ".json";
-              console.log({ cacheDirectory, documentDirectory });
-              writeAsStringAsync(fileUri, JSON.stringify(game), {
-                encoding: "utf8",
-              }).then(() =>
-                Sharing.shareAsync(fileUri, {
-                  dialogTitle: `Export ${game.name}`,
-                  mimeType: "application/json",
-                })
-              );
-            }}
-            children={"Export"}
-          />
+          <View style={{ ...styles.row, justifyContent: "center" }}>
+            <Button
+              mode='contained'
+              onPress={shareGame}
+              children={"Share"}
+              icon='share'
+              style={{ marginRight: 5, width: "40%" }}
+            />
+            <Button
+              mode='contained'
+              onPress={saveGame}
+              children={"Save"}
+              icon='memory'
+              style={{ marginLeft: 5, width: "40%" }}
+            />
+          </View>
           <View style={styles.row}>
             {game.resources?.map(rss => {
               const val = rss.packs.reduce(

@@ -8,8 +8,8 @@ const Title = ({ title = "Gemwares" }) => {
       fontSize: 30,
       textAlign: "center",
       textTransform: "capitalize",
-      fontWeight: "bold",
       marginTop: 10,
+      fontFamily: "YesevaOne-Regular",
     },
     divider: {
       marginHorizontal: 10,

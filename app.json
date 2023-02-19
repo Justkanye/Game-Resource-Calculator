@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Game_RSS_Calc",
-    "slug": "Game_RSS_Calc",
-    "scheme": "rss-calc",
+    "name": "Game Resource Calculator",
+    "slug": "game-rss-calc",
+    "scheme": "rsscalc",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
@@ -15,9 +15,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.websitesrus.gameRssCalc"

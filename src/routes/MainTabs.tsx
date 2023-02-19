@@ -4,13 +4,14 @@ import {
   MaterialBottomTabNavigationOptions,
 } from "@react-navigation/material-bottom-tabs";
 import { useTheme } from "react-native-paper";
-import { Games, Add, Settings } from "../screens";
 
+import { Games, Add, Settings } from "../screens";
 import { Icon } from "../utils";
 import { MainTabParamList } from "../types";
 
+const MainTab = createMaterialBottomTabNavigator<MainTabParamList>();
+
 const MainTabs = () => {
-  const MainTab = createMaterialBottomTabNavigator<MainTabParamList>();
   const { colors } = useTheme();
 
   const screenOptions = ({
@@ -36,14 +37,22 @@ const MainTabs = () => {
           color={color}
           size={25}
           iconComponentName={iconComponentName}
-          //isTest={route.name === "Games"}
+          onPress={() => console.log("pressed")}
         />
       );
     },
   });
 
   return (
-    <MainTab.Navigator initialRouteName='Games' screenOptions={screenOptions}>
+    <MainTab.Navigator
+      initialRouteName='Games'
+      // screenListeners={{
+      //   tabPress: ({ target }) => {
+      //     console.log({ target });
+      //   },
+      // }}
+      screenOptions={screenOptions}
+    >
       <MainTab.Screen name='Games' component={Games} />
       <MainTab.Screen name='Add' component={Add} />
       <MainTab.Screen name='Settings' component={Settings} />

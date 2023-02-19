@@ -1,7 +1,13 @@
 import { StackScreenProps } from "@react-navigation/stack";
 import { FieldArray, Formik } from "formik";
 import { FC, useLayoutEffect, useState } from "react";
-import { StyleSheet, View, ScrollView, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import {
   Text,
   TextInput,
@@ -77,6 +83,22 @@ const Game: FC<Props> = ({
     },
   });
 
+  const confirmDelete = () =>
+    Alert.alert(
+      "Delete game?",
+      `Please confirm your request to delete "${game?.name}"`,
+      [
+        {
+          text: "Confirm",
+          onPress: () => deleteGame(gameId),
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ]
+    );
+
   useLayoutEffect(() => {
     if (game?.name)
       navigation.setOptions({
@@ -86,7 +108,7 @@ const Game: FC<Props> = ({
             <TouchableOpacity
               style={{ marginRight: 10 }}
               activeOpacity={pressOpacity}
-              onPress={() => deleteGame(gameId)}
+              onPress={confirmDelete}
             >
               <Icon color={colors.error} iconName='trash' />
             </TouchableOpacity>

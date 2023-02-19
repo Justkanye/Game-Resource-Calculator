@@ -10,7 +10,7 @@ import { useStore } from "../hooks";
 import { Game, RootStackParamList } from "../types";
 import { Title } from "../utils";
 import { getError } from "../helpers";
-import { gameSchema } from "../constants";
+import { gameSchema, prefix } from "../constants";
 
 const Games = () => {
   const { colors } = useTheme();
@@ -111,7 +111,7 @@ const Games = () => {
       renderItem={({ item }) => (
         <Card
           onPress={() => {
-            Linking.openURL(`rsscalc://app/game/${item.id}`).catch(e => {
+            Linking.openURL(`${prefix}game/${item.id}`).catch(e => {
               console.log(getError(e));
               alert(getError(e));
               navigation.navigate("Game", {

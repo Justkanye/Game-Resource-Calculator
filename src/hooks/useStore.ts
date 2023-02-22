@@ -13,7 +13,7 @@ const getDefaultState = () => {
   };
 };
 
-const useSettings = create(
+const useStore = create(
   persist(
     combine({ ...getDefaultState() }, set => ({
       addGame: (game: Game) =>
@@ -40,4 +40,4 @@ const useSettings = create(
   )
 );
 
-export default useSettings;
+export default useStore;

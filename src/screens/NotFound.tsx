@@ -13,7 +13,7 @@ const NotFound = () => {
       <Button
         style={{ margin: 20 }}
         mode='contained'
-        onPress={() => navigation.navigate("Main", {})}
+        onPress={() => navigation.navigate("Main")}
       >
         Go home
       </Button>

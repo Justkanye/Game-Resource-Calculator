@@ -4,3 +4,4 @@ export { default as Game } from "./Game";
 export { default as Edit } from "./Edit";
 export { default as Settings } from "./Settings";
 export { default as NotFound } from "./NotFound";
+export { default as Onboarding } from "./Onboarding";

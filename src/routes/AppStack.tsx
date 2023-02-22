@@ -11,55 +11,35 @@ import {
   DarkTheme,
 } from "react-native-paper";
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";
-import { addEventListener } from "expo-linking";
 
-import { Edit, Game, NotFound } from "../screens";
+import { Edit, Game, NotFound, Onboarding } from "../screens";
 import MainTabs from "./MainTabs";
 import { useSettings } from "../hooks";
 import { RootStackParamList } from "../types";
-import { prefix } from "../constants";
+import { linking } from "../constants";
 
 const AppStackNav = createSharedElementStackNavigator<RootStackParamList>();
 
 const AppStack = () => {
   const { colors } = useTheme();
-  const [theme, inistialState, setInitialState] = useSettings(s => [
-    s.theme,
-    s.inistialState,
-    s.setInitialState,
-  ]);
+  const [theme, inistialState, setInitialState, hasOnboarded, setHasOnboarded] =
+    useSettings(s => [
+      s.theme,
+      s.inistialState,
+      s.setInitialState,
+      s.hasOnboarded,
+      s.setHasOnboarded,
+    ]);
   const isDark = theme === "dark";
-  // console.log({ prefix });
 
   return (
     <PaperProvider theme={isDark ? DarkTheme : DefaultTheme}>
       <StatusBar style='light' />
       <NavigationContainer
-        linking={{
-          prefixes: [prefix],
-          subscribe(listener) {
-            const subscriber = addEventListener("url", ({ url }) => {
-              console.log({ url });
-              listener(url);
-            });
-            return subscriber.remove;
-          },
-          config: {
-            screens: {
-              Main: "/",
-              Game: {
-                path: "game/:gameId",
-                parse: {
-                  gameId: gameId => `${gameId}`,
-                },
-              },
-              NotFound: "*",
-            },
-          },
-        }}
+        linking={linking}
         theme={isDark ? NavDarkTheme : NavLightTheme}
         initialState={inistialState}
-        onStateChange={s => s && setInitialState(s)}
+        onStateChange={s => setInitialState(s)}
       >
         <AppStackNav.Navigator
           screenOptions={() => ({
@@ -74,8 +54,16 @@ const AppStack = () => {
               fontFamily: "YesevaOne-Regular",
             },
           })}
+          initialRouteName={hasOnboarded ? "Main" : "Onboarding"}
         >
           <AppStackNav.Screen name='Main' component={MainTabs} />
+          <AppStackNav.Screen
+            name='Onboarding'
+            component={Onboarding}
+            options={{
+              headerShown: false,
+            }}
+          />
           <AppStackNav.Screen
             name='Game'
             initialParams={{

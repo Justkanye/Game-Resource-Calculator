@@ -13,8 +13,7 @@ import {
   writeAsStringAsync,
   StorageAccessFramework,
 } from "expo-file-system";
-import * as Sharing from "expo-sharing";
-import * as Linking from "expo-linking";
+import { shareAsync } from "expo-sharing";
 
 import { getError, optimizeCount } from "../helpers";
 import { useStore } from "../hooks";
@@ -95,7 +94,7 @@ const Game: FC<Props> = ({
     writeAsStringAsync(fileUri, JSON.stringify(game), {
       encoding: "utf8",
     }).then(() =>
-      Sharing.shareAsync(fileUri, {
+      shareAsync(fileUri, {
         dialogTitle: `Share ${game.name}`,
         mimeType: "application/json",
       })

@@ -1,3 +1,5 @@
+import { ImageSourcePropType } from "react-native";
+
 export type Game = {
   name: string;
   id: string;
@@ -21,8 +23,8 @@ export type AddGameInitialValues = {
 };
 
 export type RootStackParamList = {
-  Main: {
-    screen?: "Games" | "Add" | "Settings";
+  Main?: {
+    screen: keyof MainTabParamList;
   };
   Game: {
     gameId: string;
@@ -31,10 +33,18 @@ export type RootStackParamList = {
     gameId: string;
   };
   NotFound: undefined;
+  Onboarding: undefined;
 };
 
 export type MainTabParamList = {
   Games: undefined;
   Add: undefined;
   Settings: undefined;
+};
+
+export type OnboardingItemType = {
+  title: string;
+  text: string;
+  image: ImageSourcePropType;
+  key: number;
 };

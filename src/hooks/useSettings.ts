@@ -5,15 +5,16 @@ import { combine, persist } from "zustand/middleware";
 
 const getDefaultState = () => {
   let theme: ThemeMode;
-  let inistialState: InitialState;
-  return { theme, inistialState };
+  let inistialState: InitialState | undefined;
+  return { theme, inistialState, hasOnboarded: false };
 };
 
 const useSettings = create(
   persist(
     combine({ ...getDefaultState() }, set => ({
       setTheme: (theme: ThemeMode) => set({ theme }),
-      setInitialState: (inistialState: InitialState) => set({ inistialState }),
+      setInitialState: (inistialState?: InitialState) => set({ inistialState }),
+      setHasOnboarded: (hasOnboarded: boolean) => set({ hasOnboarded }),
       toggleTheme: () =>
         set(prev => ({ theme: prev.theme === "dark" ? "light" : "dark" })),
       reset: () => set(getDefaultState()),

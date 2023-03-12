@@ -1,15 +1,19 @@
-import AnimatedLottieView from "lottie-react-native";
+import { FC } from "react";
 import { View } from "react-native";
 import { Text } from "react-native-paper";
 
-import { DELEVERING } from "../constants";
+import { StrokeAnimation } from "../components";
 
-const LoadingScreen = ({ loadingText = "Loading" }) => {
+const LoadingScreen: FC<Props> = ({
+  loadingText = "Loading",
+  setinishedAnimation,
+}) => {
+  const backgroundColor = "#121212"; //#aaaaff
   return (
     <View
       style={{
         flex: 1,
-        backgroundColor: "#aaaaff",
+        backgroundColor,
       }}
     >
       <View
@@ -20,17 +24,13 @@ const LoadingScreen = ({ loadingText = "Loading" }) => {
           flexDirection: "row",
         }}
       >
-        <AnimatedLottieView
-          source={DELEVERING}
-          autoPlay
-          loop
-          style={{ width: 100, height: 100 }}
-        />
+        <StrokeAnimation {...{ setinishedAnimation }} />
       </View>
       <Text
         style={{
           textAlign: "center",
           paddingBottom: 20,
+          color: "#ccc",
         }}
       >
         {loadingText + "..."}
@@ -40,3 +40,8 @@ const LoadingScreen = ({ loadingText = "Loading" }) => {
 };
 
 export default LoadingScreen;
+
+type Props = {
+  loadingText?: string;
+  setinishedAnimation: (val: boolean) => void;
+};

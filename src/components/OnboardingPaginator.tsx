@@ -1,5 +1,6 @@
 import { FC } from "react";
-import { StyleSheet, useWindowDimensions, View } from "react-native";
+import { useWindowDimensions, View } from "react-native";
+import { useTheme } from "react-native-paper";
 import Animated, {
   Extrapolate,
   interpolate,
@@ -11,6 +12,7 @@ import { OnboardingItemType } from "../types";
 
 const OnboardingPaginator: FC<Props> = ({ data, scrollX }) => {
   const { width } = useWindowDimensions();
+  const { colors } = useTheme();
   const getStyle = (index: number) =>
     useAnimatedStyle(() => {
       const inputRange = [
@@ -34,13 +36,13 @@ const OnboardingPaginator: FC<Props> = ({ data, scrollX }) => {
         height: 10,
         borderRadius: 5,
         marginHorizontal: 8,
-        backgroundColor: "#493d8a",
+        backgroundColor: colors.accent, //"#493d8a",
         width: dotWidth,
         opacity,
       };
-    }, [scrollX.value]);
+    }, [scrollX.value, width, colors.accent]);
   return (
-    <View style={styles.container}>
+    <View style={{ flexDirection: "row", marginVertical: 15 }}>
       {data.map(({ key }, index) => {
         return <Animated.View {...{ key, style: getStyle(index) }} />;
       })}
@@ -49,10 +51,6 @@ const OnboardingPaginator: FC<Props> = ({ data, scrollX }) => {
 };
 
 export default OnboardingPaginator;
-
-const styles = StyleSheet.create({
-  container: { flexDirection: "row", height: 64 },
-});
 
 type Props = {
   data: OnboardingItemType[];

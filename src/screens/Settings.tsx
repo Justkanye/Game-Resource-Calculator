@@ -4,13 +4,11 @@ import { List } from "react-native-paper";
 import { useEffect, useRef } from "react";
 
 import { useSettings } from "../hooks";
-import { THEME_ANIMATION } from "../constants";
+import { ONBOARDING_STATE_KEY, THEME_ANIMATION } from "../constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Settings = () => {
-  const [toggleTheme, theme] = useSettings(state => [
-    state.toggleTheme,
-    state.theme,
-  ]);
+  const [toggleTheme, theme] = useSettings(s => [s.toggleTheme, s.theme]);
   const lottieRef = useRef<AnimatedLottieView>(null);
 
   useEffect(() => {
@@ -38,6 +36,19 @@ const Settings = () => {
             />
           </TouchableOpacity>
         )}
+      />
+      <List.Item
+        title='Clear Onboarding State'
+        onPress={() =>
+          AsyncStorage.setItem(
+            ONBOARDING_STATE_KEY,
+            JSON.stringify({ currentIndex: 0, hasOnboarded: false }),
+            err => {
+              if (err) console.log({ err });
+              else alert("Onboarding state cleared");
+            }
+          )
+        }
       />
     </View>
   );

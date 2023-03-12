@@ -9,7 +9,7 @@ import * as FileSystem from "expo-file-system";
 import { useStore } from "../hooks";
 import { Game, RootStackParamList } from "../types";
 import { Title } from "../utils";
-import { getError } from "../helpers";
+import { getError, schedulePushNotification } from "../helpers";
 import { gameSchema, prefix } from "../constants";
 
 const Games = () => {
@@ -109,19 +109,42 @@ const Games = () => {
       }
       data={games}
       renderItem={({ item }) => (
-        <Card
-          onPress={() => {
-            Linking.openURL(`${prefix}game/${item.id}`).catch(e => {
-              console.log(getError(e));
-              alert(getError(e));
-              navigation.navigate("Game", {
-                gameId: item.id,
+        <>
+          <Card
+            onPress={() => {
+              Linking.openURL(`${prefix}game/${item.id}`).catch(e => {
+                console.log(getError(e));
+                alert(getError(e));
+                navigation.navigate("Game", {
+                  gameId: item.id,
+                });
               });
-            });
-          }}
-        >
-          <Card.Title title={item.name} />
-        </Card>
+            }}
+          >
+            <Card.Title title={item.name} />
+          </Card>
+          <Button
+            mode='contained'
+            onPress={() => {
+              schedulePushNotification({
+                content: {
+                  title: item.name,
+                  body: `Open ${item.name} from notification`,
+                  data: {
+                    deepLink: `${prefix}game/${item.id}`,
+                  },
+                  badge: 1,
+                  autoDismiss: false,
+                },
+                trigger: { seconds: 10 },
+              });
+            }}
+            children={"Get Notification"}
+            style={{
+              marginBottom: 10,
+            }}
+          />
+        </>
       )}
     />
   );

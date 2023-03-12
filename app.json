@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Game Resource Calculator",
-    "slug": "game-rss-calc",
+    "slug": "Game_RSS_Calc",
     "scheme": "rsscalc",
     "version": "1.0.0",
     "orientation": "default",

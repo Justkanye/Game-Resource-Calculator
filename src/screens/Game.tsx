@@ -1,5 +1,5 @@
 import { StackScreenProps } from "@react-navigation/stack";
-import { FC, useLayoutEffect } from "react";
+import { FC, useLayoutEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -7,7 +7,14 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { Button, List, Text, TextInput, useTheme } from "react-native-paper";
+import {
+  Button,
+  List,
+  Menu,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 import {
   cacheDirectory,
   writeAsStringAsync,
@@ -34,6 +41,7 @@ const Game: FC<Props> = ({
     s.addGame,
     s.deleteGame,
   ]);
+  const [visible, setVisible] = useState(false);
 
   const styles = StyleSheet.create({
     container: {
@@ -106,29 +114,58 @@ const Game: FC<Props> = ({
       navigation.setOptions({
         title: game.name,
         headerRight: ({ tintColor, pressOpacity }) => (
-          <View style={styles.row}>
-            <TouchableOpacity
-              activeOpacity={pressOpacity}
+          <Menu
+            {...{ visible }}
+            onDismiss={() => setVisible(false)}
+            anchor={
+              <TouchableOpacity
+                activeOpacity={pressOpacity}
+                onPress={() => setVisible(true)}
+              >
+                <Icon
+                  color={tintColor}
+                  iconComponentName='Feather'
+                  iconName='more-vertical'
+                />
+              </TouchableOpacity>
+            }
+          >
+            <Menu.Item title='Save' icon='content-save' onPress={saveGame} />
+            <Menu.Item title='Share' icon='share-variant' onPress={shareGame} />
+            <Menu.Item
+              title='Edit'
+              icon='notebook-edit'
               onPress={() =>
                 navigation.navigate("Edit", {
                   gameId,
                 })
               }
-            >
-              <Icon
-                color={tintColor}
-                iconComponentName='Feather'
-                iconName='edit'
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{ marginHorizontal: 10 }}
-              activeOpacity={pressOpacity}
-              onPress={confirmDelete}
-            >
-              <Icon color={colors.error} iconName='trash' />
-            </TouchableOpacity>
-          </View>
+            />
+            <Menu.Item title='Delete' icon='delete' onPress={confirmDelete} />
+          </Menu>
+          // <View style={styles.row}>
+          //   <TouchableOpacity
+          //     activeOpacity={pressOpacity}
+          //     onPress={() =>
+          //       navigation.navigate("Edit", {
+          //         gameId,
+          //       })
+          //     }
+          //   >
+          //     <Icon
+          //       color={tintColor}
+          //       iconComponentName='Feather'
+          //       iconName='edit'
+          //     />
+          //   </TouchableOpacity>
+          //   <TouchableOpacity
+          //     style={{ marginHorizontal: 10 }}
+          //     activeOpacity={pressOpacity}
+          //     onPress={confirmDelete}
+          //   >
+          //     <Icon color={colors.error} iconName='trash' />
+          //   </TouchableOpacity>
+          // </View>
         ),
       });
   }, [game?.name]);
@@ -143,14 +180,14 @@ const Game: FC<Props> = ({
               mode='contained'
               onPress={shareGame}
               children={"Share"}
-              icon='share'
+              icon='share-variant'
               style={{ marginRight: 5, width: "40%" }}
             />
             <Button
               mode='contained'
               onPress={saveGame}
               children={"Save"}
-              icon='memory'
+              icon='content-save'
               style={{ marginLeft: 5, width: "40%" }}
             />
           </View>

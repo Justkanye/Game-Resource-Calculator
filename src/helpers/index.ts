@@ -1,3 +1,8 @@
+import {
+  NotificationRequestInput,
+  scheduleNotificationAsync,
+} from "expo-notifications";
+
 /**
  * Random uuid generator
  */
@@ -57,6 +62,7 @@ export const updateObj = <T extends object>(prev: T, newObj?: T): T => {
   if (!newObj) return prev ?? {};
   let updatedObj = prev ?? {};
   Object.keys(newObj).forEach(key => {
+    if(newObj[key])
     //@ts-ignore
     updatedObj[key] = newObj[key];
   });
@@ -104,3 +110,20 @@ export const formatParentname = (parentName: string) => {
     return toUse[0].toUpperCase() + toUse.slice(1, toUse.length - 1);
   else return toUse[0].toUpperCase() + toUse.slice(1);
 };
+
+export async function schedulePushNotification(
+  input: NotificationRequestInput = {
+    content: {
+      title: "You've got mail! 📬",
+      body: "Here is the notification body",
+      data: { data: "goes here" },
+    },
+    trigger: { seconds: 2 },
+  }
+) {
+  try {
+    await scheduleNotificationAsync(input);
+  } catch (error) {
+    alert(getError(error));
+  }
+}

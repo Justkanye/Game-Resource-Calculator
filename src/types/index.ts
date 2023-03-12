@@ -1,4 +1,5 @@
-import { ImageSourcePropType } from "react-native";
+import { FC } from "react";
+import { SvgProps } from "react-native-svg";
 
 export type Game = {
   name: string;
@@ -45,6 +46,12 @@ export type MainTabParamList = {
 export type OnboardingItemType = {
   title: string;
   text: string;
-  image: ImageSourcePropType;
+  // image: ImageSourcePropType;
   key: number;
+  Svg: FC<SvgProps>;
+};
+
+export type OnboardingState = {
+  currentIndex: number;
+  hasOnboarded: boolean;
 };

@@ -1,53 +1,38 @@
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { StyleSheet, FlatList, Alert } from "react-native";
-import { Button, Card, useTheme } from "react-native-paper";
-import * as Linking from "expo-linking";
+import { StyleSheet, Alert, TouchableOpacity } from "react-native";
+import { useTheme, Divider, AnimatedFAB } from "react-native-paper";
 import { getDocumentAsync } from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
+import { SwipeListView } from "react-native-swipe-list-view";
 
 import { useStore } from "../hooks";
-import { Game, RootStackParamList } from "../types";
-import { Title } from "../utils";
-import { getError, schedulePushNotification } from "../helpers";
-import { gameSchema, prefix } from "../constants";
+import { Game } from "../types";
+import { Icon, Title } from "../utils";
+import { gameSchema } from "../constants";
+import { GameListItem } from "../components";
 
 const Games = () => {
-  const { colors } = useTheme();
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const [games, addGame] = useStore(s => [s.games, s.addGame]);
+  const { colors, roundness } = useTheme();
+  const [games, addGame, deleteGame] = useStore(s => [
+    s.games,
+    s.addGame,
+    s.deleteGame,
+  ]);
   const styles = StyleSheet.create({
     container: {
       paddingHorizontal: 5,
     },
-    title: {
-      fontSize: 30,
-      textAlign: "center",
-      textTransform: "capitalize",
-      fontWeight: "bold",
-      marginTop: 10,
-    },
     divider: {
-      marginHorizontal: 10,
-      flex: 1,
-      height: 2,
       backgroundColor: colors.disabled,
     },
-    row: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      marginHorizontal: "5%",
-    },
-    emptyText: {
-      textAlign: "center",
-      color: colors.placeholder,
-      marginBottom: 100,
-    },
-    cardContainer: {
-      width: "100%",
+    delete: {
+      alignSelf: "flex-end",
+      backgroundColor: colors.error,
       justifyContent: "center",
-      flexDirection: "row",
+      alignItems: "center",
+      height: "100%",
+      borderTopRightRadius: roundness,
+      borderBottomRightRadius: roundness,
+      aspectRatio: 1,
     },
   });
 
@@ -91,63 +76,65 @@ const Games = () => {
         });
     });
 
+  const confirmDelete = (game: Game) => {
+    Alert.alert(
+      "Delete game?",
+      `Please confirm your request to delete "${game.name}"`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Confirm",
+          onPress: () => deleteGame(game.id),
+        },
+      ]
+    );
+  };
+
   return (
-    <FlatList
+    <SwipeListView
       contentContainerStyle={styles.container}
-      ListHeaderComponent={
-        <>
-          <Title title='Games' />
-          <Button
-            mode='contained'
-            onPress={importGame}
-            children={"Import"}
-            style={{
-              marginBottom: 10,
-            }}
-          />
-        </>
-      }
+      ListHeaderComponent={<Title title='Games' />}
       data={games}
-      renderItem={({ item }) => (
-        <>
-          <Card
-            onPress={() => {
-              Linking.openURL(`${prefix}game/${item.id}`).catch(e => {
-                console.log(getError(e));
-                alert(getError(e));
-                navigation.navigate("Game", {
-                  gameId: item.id,
-                });
-              });
-            }}
-          >
-            <Card.Title title={item.name} />
-          </Card>
-          <Button
-            mode='contained'
-            onPress={() => {
-              schedulePushNotification({
-                content: {
-                  title: item.name,
-                  body: `Open ${item.name} from notification`,
-                  data: {
-                    deepLink: `${prefix}game/${item.id}`,
-                  },
-                  badge: 1,
-                  autoDismiss: false,
-                },
-                trigger: { seconds: 10 },
-              });
-            }}
-            children={"Get Notification"}
-            style={{
-              marginBottom: 10,
-            }}
+      renderItem={({ item }) => <GameListItem {...item} />}
+      ItemSeparatorComponent={() => <Divider style={styles.divider} />}
+      renderHiddenItem={({ item }) => (
+        <TouchableOpacity
+          style={styles.delete}
+          onPress={() => confirmDelete(item)}
+        >
+          <Icon
+            color='#fff'
+            iconName='delete'
+            iconComponentName='MaterialCommunityIcons'
           />
-        </>
+        </TouchableOpacity>
       )}
+      rightOpenValue={-50}
+      previewOpenValue={-40}
+      previewOpenDelay={3000}
+      ListFooterComponent={
+        <AnimatedFAB
+          icon='file-import'
+          label='Import'
+          onPress={importGame}
+          extended
+        />
+      }
     />
   );
 };
 
 export default Games;
+
+/* <Button
+    mode='contained'
+    onPress={importGame}
+    children={"Import"}
+    style={{
+      margin: 10,
+    }}
+    icon='file-import'
+  /> */

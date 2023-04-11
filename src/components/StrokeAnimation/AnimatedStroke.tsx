@@ -5,27 +5,39 @@ import Animated, {
   useAnimatedProps,
 } from "react-native-reanimated";
 import { Path, PathProps } from "react-native-svg";
+
 import { getRandEl } from "../../helpers";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
-
-const strokeColors = [Colors.orange300, Colors.blue300, Colors.red300, "#ccc"];
-const stroke = getRandEl(strokeColors);
-
+const StrokeColors = [
+  Colors.orange300,
+  Colors.blue300,
+  Colors.red300,
+  Colors.amber500,
+];
 const AnimatedStroke: FC<Props> = ({
   d,
   strokeWidth,
   progress,
   bgProgress,
 }) => {
+  const stroke = getRandEl(StrokeColors);
   const [length, setLength] = useState(0);
   const ref = useRef<typeof AnimatedPath>(null);
-  const animatedProps = useAnimatedProps<PathProps>(() => ({
-    strokeDashoffset: length - length * progress.value,
-  }));
-  const bgAnimatedProps = useAnimatedProps<PathProps>(() => ({
-    strokeDashoffset: length - length * bgProgress.value,
-  }));
+  const animatedProps = useAnimatedProps<PathProps>(
+    () => ({
+      strokeDashoffset: length - length * progress.value,
+      opacity: length ? 1 : 0,
+    }),
+    [length, progress.value]
+  );
+  const bgAnimatedProps = useAnimatedProps<PathProps>(
+    () => ({
+      strokeDashoffset: length - length * bgProgress.value,
+      opacity: length ? 1 : 0,
+    }),
+    [length, bgProgress.value]
+  );
 
   return (
     <>

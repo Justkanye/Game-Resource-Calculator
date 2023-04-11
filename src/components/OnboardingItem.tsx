@@ -9,10 +9,10 @@ const OnboardingItem: FC<OnboardingItemType> = ({ text, title, Svg }) => {
   const { colors } = useTheme();
   return (
     <View style={{ ...styles.container, width }}>
-      <Svg {...{ width }} style={{ ...styles.image }} fill={colors.accent} />
-      <View style={{}}>
+      <Svg {...{ width }} style={styles.image} fill={colors.accent} />
+      <View>
         <Text style={{ ...styles.title, color: colors.primary }}>{title}</Text>
-        <Text style={{ ...styles.text }}>{text}</Text>
+        <Text style={styles.text}>{text}</Text>
       </View>
     </View>
   );

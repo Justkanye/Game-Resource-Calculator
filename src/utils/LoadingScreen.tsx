@@ -6,7 +6,7 @@ import { StrokeAnimation } from "../components";
 
 const LoadingScreen: FC<Props> = ({
   loadingText = "Loading",
-  setinishedAnimation,
+  setFinishedAnimation,
 }) => {
   const backgroundColor = "#121212"; //#aaaaff
   return (
@@ -24,7 +24,7 @@ const LoadingScreen: FC<Props> = ({
           flexDirection: "row",
         }}
       >
-        <StrokeAnimation {...{ setinishedAnimation }} />
+        <StrokeAnimation {...{ setFinishedAnimation }} />
       </View>
       <Text
         style={{
@@ -43,5 +43,5 @@ export default LoadingScreen;
 
 type Props = {
   loadingText?: string;
-  setinishedAnimation: (val: boolean) => void;
+  setFinishedAnimation: (val: boolean) => void;
 };

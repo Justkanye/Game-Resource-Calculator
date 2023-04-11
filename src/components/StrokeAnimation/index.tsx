@@ -7,6 +7,7 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import Svg from "react-native-svg";
+
 import { PATHS } from "../../constants";
 import AnimatedStroke from "./AnimatedStroke";
 
@@ -14,20 +15,20 @@ const strokeWidth = 2;
 const vWidth = 246 + strokeWidth;
 const vHeight = 61 + strokeWidth;
 const halfStroke = strokeWidth / 2;
+const duration = 3500;
 
-const StrokeAnimation: FC<Props> = ({ setinishedAnimation }) => {
+const StrokeAnimation: FC<Props> = ({ setFinishedAnimation }) => {
   const { width } = useWindowDimensions();
   const svgWidth = width - 32;
   const svgHeight = (svgWidth * vHeight) / vWidth;
   const progress = useSharedValue(0);
   const bgProgress = useSharedValue(0);
-  const duration = 40000;
 
   useEffect(() => {
     progress.value = withTiming(
       1,
       { duration, easing: Easing.bezier(0.65, 0, 0.35, 1) },
-      () => runOnJS(setinishedAnimation)(true)
+      () => runOnJS(setFinishedAnimation)(true)
     );
     bgProgress.value = withTiming(1, {
       duration,
@@ -56,5 +57,5 @@ const StrokeAnimation: FC<Props> = ({ setinishedAnimation }) => {
 export default StrokeAnimation;
 
 type Props = {
-  setinishedAnimation: (val: boolean) => void;
+  setFinishedAnimation: (val: boolean) => void;
 };

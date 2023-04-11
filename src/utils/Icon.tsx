@@ -28,7 +28,7 @@ const Icon = ({
   if (isTest)
     return (
       <Icons.MaterialCommunityIcons
-        name='content-save'
+        name='bell'
         size={size}
         color={color ?? colors.accent}
         style={style}

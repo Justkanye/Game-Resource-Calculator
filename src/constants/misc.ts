@@ -10,10 +10,20 @@ export const linking: LinkingOptions<RootStackParamList> = {
   prefixes: [prefix],
   config: {
     screens: {
-      Main: "/",
+      Main: {
+        path: "/",
+        screens: {
+          Add: "add",
+          Games: "games",
+          Settings: "settings",
+        },
+        initialRouteName: "Games",
+      },
       Game: {
         path: "game/:gameId",
       },
+      Edit: "edit",
+      Onboarding: "onboard",
       NotFound: "*",
     },
     initialRouteName: "Main",
@@ -24,6 +34,46 @@ export const linking: LinkingOptions<RootStackParamList> = {
   //     listener(url);
   //   });
   //   return subscriber.remove;
+  // },
+  // async getInitialURL() {
+  //   // First, you may want to do the default deep link handling
+  //   // Check if app was opened from a deep link
+  //   const url = await Linking.getInitialURL();
+
+  //   if (url != null) {
+  //     return url;
+  //   }
+
+  //   // Handle URL from expo push notifications
+  //   const response = await Notifications.getLastNotificationResponseAsync();
+
+  //   return response?.notification.request.content.data.url;
+  // },
+  // subscribe(listener) {
+  //   // Listen to incoming links from deep linking
+  //   const onReceiveURL = Linking.addEventListener(
+  //     "url",
+  //     ({ url }: { url: string }) => listener(url)
+  //   );
+
+  //   // Listen to expo push notifications
+  //   const subscription = Notifications.addNotificationResponseReceivedListener(
+  //     response => {
+  //       const url = response.notification.request.content.data.url as string;
+
+  //       // Any custom logic to see whether the URL needs to be handled
+  //       //...
+
+  //       // Let React Navigation handle the URL
+  //       if (url) listener(url);
+  //     }
+  //   );
+
+  //   return () => {
+  //     // Clean up the event listeners
+  //     onReceiveURL.remove();
+  //     subscription.remove();
+  //   };
   // },
 };
 

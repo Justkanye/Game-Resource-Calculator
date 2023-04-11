@@ -1,13 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import * as Updates from "expo-updates";
 import { Alert, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  InitialState,
-  NavigationContainer,
-  DarkTheme as NavDarkTheme,
-  DefaultTheme as NavLightTheme,
-} from "@react-navigation/native";
+import { InitialState } from "@react-navigation/native";
 import { loadAsync } from "expo-font";
 import * as Notifications from "expo-notifications";
 import { StatusBar } from "expo-status-bar";
@@ -16,10 +11,10 @@ import {
   DefaultTheme,
   DarkTheme,
 } from "react-native-paper";
+import { isDevice } from "expo-device";
 
 import AppStack from "./src/routes/AppStack";
 import {
-  linking,
   NAVIGATION_STATE_KEY,
   ONBOARDING_STATE_KEY,
   YENSEVA_ONE,
@@ -27,9 +22,7 @@ import {
 import { LoadingScreen } from "./src/utils";
 import { OnboardingState } from "./src/types";
 import { Onboarding } from "./src/screens";
-import { isDevice } from "expo-device";
 import { useSettings } from "./src/hooks";
-import { openURL } from "expo-linking";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -43,20 +36,14 @@ export default function App() {
   const [loadedFonts, setLoadedFonts] = useState(false);
   const [loadedOnboardingState, setLoadedOnboardingState] = useState(false);
   const [loadedNavigationState, setLoadedNavigationState] = useState(false);
-  const [finishedAnimation, setinishedAnimation] = useState(false);
+  const [finishedAnimation, setFinishedAnimation] = useState(false);
   const [onboardingState, setOnboardingState] = useState<OnboardingState>({
     currentIndex: 0,
     hasOnboarded: false,
   });
   const [initialState, setInitialState] = useState<InitialState>();
 
-  const [setExpoPushToken, theme] = useSettings(s => [
-    s.setExpoPushToken,
-    s.theme,
-  ]);
-
-  const notificationListener = useRef<Subscription>();
-  const responseListener = useRef<Subscription>();
+  const theme = useSettings(s => s.theme);
 
   const isDark = theme === "dark";
 
@@ -94,28 +81,6 @@ export default function App() {
       setLoadedNavigationState(true);
     });
     // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener(notification => {
-        console.log({ notification });
-        // setNotification(notification);
-      });
-
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener(response => {
-        console.log({ response });
-        const deepLink = response.notification.request.content.data?.deepLink;
-        if (typeof deepLink === "string") openURL(deepLink);
-      });
-
-    return () => {
-      if (notificationListener.current)
-        Notifications.removeNotificationSubscription(
-          notificationListener.current
-        );
-      if (responseListener.current)
-        Notifications.removeNotificationSubscription(responseListener.current);
-    };
   }, []);
 
   const renderChildren = () => {
@@ -125,32 +90,19 @@ export default function App() {
       !loadedNavigationState ||
       !finishedAnimation
     )
-      return <LoadingScreen {...{ setinishedAnimation }} />;
+      return <LoadingScreen {...{ setFinishedAnimation }} />;
     if (!onboardingState.hasOnboarded)
       return <Onboarding {...{ setOnboardingState, onboardingState }} />;
-    return <AppStack />;
+    return <AppStack {...{ initialState }} />;
   };
 
   return (
     <PaperProvider theme={isDark ? DarkTheme : DefaultTheme}>
       <StatusBar style='light' />
-      <NavigationContainer
-        linking={linking}
-        theme={isDark ? NavDarkTheme : NavLightTheme}
-        initialState={initialState}
-        onStateChange={state => {
-          AsyncStorage.setItem(NAVIGATION_STATE_KEY, JSON.stringify(state));
-        }}
-      >
-        {renderChildren()}
-      </NavigationContainer>
+      {renderChildren()}
     </PaperProvider>
   );
 }
-
-type Subscription = {
-  remove: () => void;
-};
 
 async function registerForPushNotificationsAsync() {
   let token;

@@ -7,14 +7,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import {
-  Button,
-  List,
-  Menu,
-  Text,
-  TextInput,
-  useTheme,
-} from "react-native-paper";
+import { List, Menu, Text, TextInput } from "react-native-paper";
 import {
   cacheDirectory,
   writeAsStringAsync,
@@ -22,10 +15,11 @@ import {
 } from "expo-file-system";
 import { shareAsync } from "expo-sharing";
 
-import { getError, optimizeCount } from "../helpers";
+import { getError, optimizeCount, schedulePushNotification } from "../helpers";
 import { useStore } from "../hooks";
 import { RootStackParamList } from "../types";
-import { Icon, Title } from "../utils";
+import { Icon } from "../utils";
+import { prefix } from "../constants";
 
 type Props = StackScreenProps<RootStackParamList, "Game">;
 
@@ -35,7 +29,6 @@ const Game: FC<Props> = ({
   },
   navigation,
 }) => {
-  const { colors } = useTheme();
   const [game, addGame, deleteGame] = useStore(s => [
     s.games.find(g => g.id === gameId),
     s.addGame,
@@ -45,7 +38,7 @@ const Game: FC<Props> = ({
 
   const styles = StyleSheet.create({
     container: {
-      paddingHorizontal: 5,
+      padding: 10,
     },
     title: {
       fontSize: 30,
@@ -63,23 +56,26 @@ const Game: FC<Props> = ({
     },
   });
 
-  const confirmDelete = () =>
+  const confirmDelete = () => {
+    setVisible(false);
     Alert.alert(
       "Delete game?",
       `Please confirm your request to delete "${game?.name}"`,
       [
         {
-          text: "Confirm",
-          onPress: () => deleteGame(gameId),
-        },
-        {
           text: "Cancel",
           style: "cancel",
         },
+        {
+          text: "Confirm",
+          onPress: () => deleteGame(gameId),
+        },
       ]
     );
+  };
 
   const saveGame = async () => {
+    setVisible(false);
     const permission =
       await StorageAccessFramework.requestDirectoryPermissionsAsync();
     if (!permission.granted || !game) return;
@@ -97,6 +93,7 @@ const Game: FC<Props> = ({
   };
 
   const shareGame = () => {
+    setVisible(false);
     if (!game) return;
     const fileUri = cacheDirectory + game.name + ".json";
     writeAsStringAsync(fileUri, JSON.stringify(game), {
@@ -107,6 +104,23 @@ const Game: FC<Props> = ({
         mimeType: "application/json",
       })
     );
+  };
+
+  const sendNotification = () => {
+    setVisible(false);
+    if (game)
+      schedulePushNotification({
+        content: {
+          title: game.name,
+          body: `Open ${game.name} from notification`,
+          data: {
+            deepLink: `${prefix}game/${game.id}`,
+          },
+          badge: 1,
+          autoDismiss: false,
+        },
+        trigger: { seconds: 10 },
+      });
   };
 
   useLayoutEffect(() => {
@@ -121,6 +135,9 @@ const Game: FC<Props> = ({
               <TouchableOpacity
                 activeOpacity={pressOpacity}
                 onPress={() => setVisible(true)}
+                style={{
+                  marginRight: 10,
+                }}
               >
                 <Icon
                   color={tintColor}
@@ -135,64 +152,31 @@ const Game: FC<Props> = ({
             <Menu.Item
               title='Edit'
               icon='notebook-edit'
-              onPress={() =>
+              onPress={() => {
+                setVisible(false);
                 navigation.navigate("Edit", {
                   gameId,
-                })
-              }
+                });
+              }}
             />
             <Menu.Item title='Delete' icon='delete' onPress={confirmDelete} />
+            <Menu.Item
+              title='Get Reminder'
+              icon='bell-ring'
+              onPress={sendNotification}
+            />
           </Menu>
-          // <View style={styles.row}>
-          //   <TouchableOpacity
-          //     activeOpacity={pressOpacity}
-          //     onPress={() =>
-          //       navigation.navigate("Edit", {
-          //         gameId,
-          //       })
-          //     }
-          //   >
-          //     <Icon
-          //       color={tintColor}
-          //       iconComponentName='Feather'
-          //       iconName='edit'
-          //     />
-          //   </TouchableOpacity>
-          //   <TouchableOpacity
-          //     style={{ marginHorizontal: 10 }}
-          //     activeOpacity={pressOpacity}
-          //     onPress={confirmDelete}
-          //   >
-          //     <Icon color={colors.error} iconName='trash' />
-          //   </TouchableOpacity>
-          // </View>
         ),
       });
-  }, [game?.name]);
+  }, [game?.name, visible]);
 
   return (
     <ScrollView style={styles.container}>
       {game ? (
         <View>
-          <Title title={game.name} />
-          <View style={{ ...styles.row, justifyContent: "center" }}>
-            <Button
-              mode='contained'
-              onPress={shareGame}
-              children={"Share"}
-              icon='share-variant'
-              style={{ marginRight: 5, width: "40%" }}
-            />
-            <Button
-              mode='contained'
-              onPress={saveGame}
-              children={"Save"}
-              icon='content-save'
-              style={{ marginLeft: 5, width: "40%" }}
-            />
-          </View>
+          {/* <Title title={game.name} /> */}
           <View style={styles.row}>
-            {game.resources?.map(rss => {
+            {game.resources?.map((rss, i, arr) => {
               const val = rss.packs.reduce(
                 (prev, pack) => prev + (pack.quantity ?? 0) * (pack.value ?? 0),
                 0
@@ -200,6 +184,7 @@ const Game: FC<Props> = ({
               return (
                 <Text key={rss.name} style={styles.rssVal}>
                   {rss.name}: {optimizeCount(val)}
+                  {i !== arr.length - 1 && ","}
                 </Text>
               );
             })}

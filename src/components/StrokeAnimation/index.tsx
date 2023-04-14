@@ -15,7 +15,7 @@ const strokeWidth = 2;
 const vWidth = 246 + strokeWidth;
 const vHeight = 61 + strokeWidth;
 const halfStroke = strokeWidth / 2;
-const duration = 3500;
+const duration = 7000;
 
 const StrokeAnimation: FC<Props> = ({ setFinishedAnimation }) => {
   const { width } = useWindowDimensions();

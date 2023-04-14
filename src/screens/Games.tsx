@@ -1,16 +1,24 @@
-import { StyleSheet, Alert, TouchableOpacity } from "react-native";
+import { StyleSheet, Alert, TouchableOpacity, View } from "react-native";
 import { useTheme, Divider, AnimatedFAB } from "react-native-paper";
 import { getDocumentAsync } from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import { SwipeListView } from "react-native-swipe-list-view";
+import { StackScreenProps } from "@react-navigation/stack";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { MaterialBottomTabScreenProps } from "@react-navigation/material-bottom-tabs";
 
 import { useStore } from "../hooks";
-import { Game } from "../types";
-import { Icon, Title } from "../utils";
+import { Game, RootStackParamList, MainTabParamList } from "../types";
+import { Icon, ListEmptyComponent, Title } from "../utils";
 import { gameSchema } from "../constants";
 import { GameListItem } from "../components";
 
-const Games = () => {
+type Props = CompositeScreenProps<
+  StackScreenProps<RootStackParamList, "Main">,
+  MaterialBottomTabScreenProps<MainTabParamList, "Games">
+>;
+
+const Games = ({ navigation }: Props) => {
   const { colors, roundness } = useTheme();
   const [games, addGame, deleteGame] = useStore(s => [
     s.games,
@@ -19,10 +27,8 @@ const Games = () => {
   ]);
   const styles = StyleSheet.create({
     container: {
-      paddingHorizontal: 5,
-    },
-    divider: {
-      backgroundColor: colors.disabled,
+      // paddingHorizontal: 5,
+      flex: 1,
     },
     delete: {
       alignSelf: "flex-end",
@@ -33,6 +39,13 @@ const Games = () => {
       borderTopRightRadius: roundness,
       borderBottomRightRadius: roundness,
       aspectRatio: 1,
+    },
+    fabContainer: {
+      width: "97%",
+      height: 70,
+      justifyContent: "flex-end",
+      alignItems: "flex-end",
+      marginBottom: "3%",
     },
   });
 
@@ -94,36 +107,53 @@ const Games = () => {
   };
 
   return (
-    <SwipeListView
-      contentContainerStyle={styles.container}
-      ListHeaderComponent={<Title title='Games' />}
-      data={games}
-      renderItem={({ item }) => <GameListItem {...item} />}
-      ItemSeparatorComponent={() => <Divider style={styles.divider} />}
-      renderHiddenItem={({ item }) => (
-        <TouchableOpacity
-          style={styles.delete}
-          onPress={() => confirmDelete(item)}
-        >
-          <Icon
-            color='#fff'
-            iconName='delete'
-            iconComponentName='MaterialCommunityIcons'
+    <>
+      <SwipeListView
+        contentContainerStyle={styles.container}
+        ListHeaderComponent={<Title title='Games' />}
+        data={games}
+        renderItem={({ item }) => <GameListItem {...item} />}
+        ItemSeparatorComponent={() => <Divider />}
+        renderHiddenItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.delete}
+            onPress={() => confirmDelete(item)}
+          >
+            <Icon
+              color='#fff'
+              iconName='delete'
+              iconComponentName='MaterialCommunityIcons'
+            />
+          </TouchableOpacity>
+        )}
+        rightOpenValue={-50}
+        previewOpenValue={-40}
+        previewOpenDelay={3000}
+        ListEmptyComponent={
+          <ListEmptyComponent
+            iconComponentName='Entypo'
+            iconName='game-controller'
+            emptyText='No games yet...'
+            button={{
+              label: "Add a game",
+              onPress: () =>
+                navigation.navigate("Main", {
+                  screen: "Add",
+                }),
+            }}
           />
-        </TouchableOpacity>
-      )}
-      rightOpenValue={-50}
-      previewOpenValue={-40}
-      previewOpenDelay={3000}
-      ListFooterComponent={
+        }
+      />
+      <View style={styles.fabContainer}>
         <AnimatedFAB
           icon='file-import'
           label='Import'
           onPress={importGame}
           extended
+          visible
         />
-      }
-    />
+      </View>
+    </>
   );
 };
 

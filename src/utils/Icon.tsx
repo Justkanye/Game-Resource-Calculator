@@ -27,8 +27,8 @@ const Icon = ({
   const Icon = Icons[iconComponentName];
   if (isTest)
     return (
-      <Icons.MaterialCommunityIcons
-        name='bell'
+      <Icons.Ionicons
+        name='layers'
         size={size}
         color={color ?? colors.accent}
         style={style}

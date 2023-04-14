@@ -13,14 +13,13 @@ import {
   Title,
   useTheme,
 } from "react-native-paper";
-import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 
 import { Error } from "../components/FormElements";
 import { addGameInitialValues, addGameValidationSchema } from "../constants";
 import { randomUUID } from "../helpers";
 import { useStore } from "../hooks";
 import { Game, RootStackParamList } from "../types";
-import { Icon } from "../utils";
+import { Icon, Title as MyTitle } from "../utils";
 
 const Add = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -60,7 +59,7 @@ const Add = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* <Title>Add</Title> */}
+      <MyTitle title='Add Game' />
       <Formik
         initialValues={addGameInitialValues}
         validationSchema={addGameValidationSchema}
@@ -107,10 +106,8 @@ const Add = () => {
                     {name}
                   </Title>
                   {values.resources?.map((rss, i) => (
-                    <Animated.View
+                    <View
                       key={randomUUID()}
-                      // entering={FadeInDown}
-                      // exiting={FadeInUp}
                       style={[
                         styles.row,
                         styles.arcCon,
@@ -149,7 +146,7 @@ const Add = () => {
                           <Icon iconName='trash' color='#fff' />
                         </Button>
                       </View>
-                    </Animated.View>
+                    </View>
                   ))}
                   <Button
                     style={{ marginVertical: 10 }}

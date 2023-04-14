@@ -2,10 +2,11 @@ import AnimatedLottieView from "lottie-react-native";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { List } from "react-native-paper";
 import { useEffect, useRef } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { useSettings } from "../hooks";
 import { ONBOARDING_STATE_KEY, THEME_ANIMATION } from "../constants";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Title } from "../utils";
 
 const Settings = () => {
   const [toggleTheme, theme] = useSettings(s => [s.toggleTheme, s.theme]);
@@ -21,6 +22,7 @@ const Settings = () => {
 
   return (
     <View style={styles.container}>
+      <Title title='Settings' />
       <List.Item
         title='Change theme'
         description={(theme ?? "light") + " mode"}

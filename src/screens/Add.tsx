@@ -59,7 +59,7 @@ const Add = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <MyTitle title='Add Game' />
+      <MyTitle title='Add new Game' />
       <Formik
         initialValues={addGameInitialValues}
         validationSchema={addGameValidationSchema}

@@ -151,6 +151,7 @@ const Games = ({ navigation }: Props) => {
           onPress={importGame}
           extended
           visible
+          color='#fff'
         />
       </View>
     </>
@@ -158,13 +159,3 @@ const Games = ({ navigation }: Props) => {
 };
 
 export default Games;
-
-/* <Button
-    mode='contained'
-    onPress={importGame}
-    children={"Import"}
-    style={{
-      margin: 10,
-    }}
-    icon='file-import'
-  /> */

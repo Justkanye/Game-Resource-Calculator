@@ -62,9 +62,10 @@ export const updateObj = <T extends object>(prev: T, newObj?: T): T => {
   if (!newObj) return prev ?? {};
   let updatedObj = prev ?? {};
   Object.keys(newObj).forEach(key => {
-    if(newObj[key])
     //@ts-ignore
-    updatedObj[key] = newObj[key];
+    if (newObj[key])
+      //@ts-ignore
+      updatedObj[key] = newObj[key];
   });
 
   return updatedObj;
@@ -77,9 +78,8 @@ export const updateObj = <T extends object>(prev: T, newObj?: T): T => {
 export const optimizeCount = (count: number) => {
   const intlFormat = (num: number) =>
     (Math.floor(num * 10) / 10).toLocaleString();
-
-  if (count >= 1000000) return intlFormat(count / 1000000) + "M";
-  if (count >= 1000) return intlFormat(count / 1000) + "K";
+  if (count >= 1_000_000) return intlFormat(count / 1_000_000) + "M";
+  if (count >= 1_000) return intlFormat(count / 1_000) + "K";
   return intlFormat(count);
 };
 
@@ -111,6 +111,10 @@ export const formatParentname = (parentName: string) => {
   else return toUse[0].toUpperCase() + toUse.slice(1);
 };
 
+/**
+ * Schedule a push notification
+ * @param input
+ */
 export async function schedulePushNotification(
   input: NotificationRequestInput = {
     content: {

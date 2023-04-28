@@ -133,7 +133,7 @@ const Games = ({ navigation }: Props) => {
           <ListEmptyComponent
             iconComponentName='Entypo'
             iconName='game-controller'
-            emptyText='No games yet...'
+            itemName='games'
             button={{
               label: "Add a game",
               onPress: () =>

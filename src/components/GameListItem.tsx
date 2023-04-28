@@ -8,6 +8,7 @@ import * as Linking from "expo-linking";
 import { prefix } from "../constants";
 import { getError } from "../helpers";
 import { Game, RootStackParamList } from "../types";
+import Color from "color";
 
 const GameListItem: FC<Game> = ({ id, name }) => {
   const { colors } = useTheme();
@@ -45,7 +46,7 @@ const GameListItem: FC<Game> = ({ id, name }) => {
       <Avatar.Text
         size={40}
         label={name.charAt(0)}
-        color='#fff'
+        color={Color(colors.accent).darken(0.3).hex()}
         style={styles.avatar}
       />
       <Title>{name}</Title>

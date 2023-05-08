@@ -27,8 +27,8 @@ const Icon = ({
   const Icon = Icons[iconComponentName];
   if (isTest)
     return (
-      <Icons.Ionicons
-        name='layers'
+      <Icons.Entypo
+        name='menu'
         size={size}
         color={color ?? colors.accent}
         style={style}

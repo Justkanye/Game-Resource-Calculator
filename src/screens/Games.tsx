@@ -13,11 +13,6 @@ import { Icon, ListEmptyComponent, Title } from "../utils";
 import { gameSchema } from "../constants";
 import { GameListItem } from "../components";
 
-type Props = CompositeScreenProps<
-  StackScreenProps<RootStackParamList, "Main">,
-  MaterialBottomTabScreenProps<MainTabParamList, "Games">
->;
-
 const Games = ({ navigation }: Props) => {
   const { colors, roundness } = useTheme();
   const [games, addGame, deleteGame] = useStore(s => [
@@ -159,3 +154,8 @@ const Games = ({ navigation }: Props) => {
 };
 
 export default Games;
+
+type Props = CompositeScreenProps<
+  MaterialBottomTabScreenProps<MainTabParamList, "Games">,
+  StackScreenProps<RootStackParamList, "Main">
+>;

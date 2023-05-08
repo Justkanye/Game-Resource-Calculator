@@ -35,6 +35,7 @@ export type RootStackParamList = {
   };
   NotFound: undefined;
   Onboarding: undefined;
+  Chess: undefined;
 };
 
 export type MainTabParamList = {

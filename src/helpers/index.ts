@@ -2,6 +2,8 @@ import {
   NotificationRequestInput,
   scheduleNotificationAsync,
 } from "expo-notifications";
+import { Chess, Square } from "chess.js";
+import { Vector } from "react-native-redash";
 
 /**
  * Random uuid generator
@@ -131,3 +133,38 @@ export async function schedulePushNotification(
     alert(getError(error));
   }
 }
+
+export const toTranslation = (to: Square, size: number) => {
+  "worklet";
+  const tokens = to.split("");
+  const col = tokens[0];
+  const row = tokens[1];
+  if (!col || !row) throw new Error("Invalid notation: " + to);
+  const x = col.charCodeAt(0) - "a".charCodeAt(0);
+  const y = parseInt(row, 10) - 1;
+  return {
+    x: x * size,
+    y: 7 * size - y * size,
+  };
+};
+
+export const toPosition = ({ x, y }: Vector, size: number) => {
+  "worklet";
+  const col = String.fromCharCode(97 + Math.round(x / size));
+  const row = `${8 - Math.round(y / size)}`;
+  return `${col}${row}` as Square;
+};
+
+export const getChessGameResult = (chess: Chess) => {
+  if (chess.isCheckmate()) {
+    const winner = chess.turn() === "b" ? "White" : "Black";
+    return { title: "Checkmate", desc: `Winner: ${winner}` };
+  } else if (chess.isDraw()) {
+    let reason = "50 moves rule";
+    if (chess.isStalemate()) reason = "Stalemate";
+    else if (chess.isThreefoldRepetition()) reason = "Repitition";
+    else if (chess.isInsufficientMaterial()) reason = "Insuficient pieces";
+    return { title: "Draw", desc: reason };
+  }
+  return { title: "Game Over", desc: "Unkown reason" };
+};

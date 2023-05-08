@@ -10,6 +10,7 @@ const getDefaultState = () => {
 
   return {
     games,
+    chessFen: "",
   };
 };
 
@@ -31,6 +32,7 @@ const useStore = create(
         set(({ games }) => ({
           games: games.filter(game => game.id !== gameId),
         })),
+      setChessFen: (chessFen: string) => set({ chessFen }),
       reset: () => set(getDefaultState()),
     })),
     {

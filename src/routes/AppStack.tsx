@@ -10,7 +10,7 @@ import { FC, useEffect, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
 
-import { Edit, Game, NotFound } from "../screens";
+import { Chess, Edit, Game, NotFound } from "../screens";
 import MainTabs from "./MainTabs";
 import { useSettings } from "../hooks";
 import { RootStackParamList } from "../types";
@@ -101,6 +101,11 @@ const AppStack: FC<Props> = ({ initialState }) => {
             gameId: undefined,
           }}
           component={Edit}
+        />
+        <AppStackNav.Screen
+          name='Chess'
+          component={Chess}
+          options={{ title: "Chess", headerTitleAlign: "center" }}
         />
         <AppStackNav.Screen name='NotFound' component={NotFound} />
       </AppStackNav.Navigator>

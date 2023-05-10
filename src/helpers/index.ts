@@ -80,8 +80,8 @@ export const updateObj = <T extends object>(prev: T, newObj?: T): T => {
 export const optimizeCount = (count: number) => {
   const intlFormat = (num: number) =>
     (Math.floor(num * 10) / 10).toLocaleString();
-  if (count >= 1_000_000) return intlFormat(count / 1_000_000) + "M";
-  if (count >= 1_000) return intlFormat(count / 1_000) + "K";
+  if (count >= 1000000) return intlFormat(count / 1000000) + "M";
+  if (count >= 1000) return intlFormat(count / 1000) + "K";
   return intlFormat(count);
 };
 

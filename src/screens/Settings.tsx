@@ -28,6 +28,7 @@ const Settings = ({ navigation }: Props) => {
     <View style={styles.container}>
       <Title title='Settings' />
       <List.Item
+        left={() => <Icon iconName='shirt-outline' />}
         title='Change theme'
         description={(theme ?? "light") + " mode"}
         onPress={toggleTheme}
@@ -45,6 +46,7 @@ const Settings = ({ navigation }: Props) => {
       />
       <List.Item
         title='Clear Onboarding State'
+        left={() => <Icon iconName='close-sharp' />}
         onPress={() =>
           AsyncStorage.setItem(
             ONBOARDING_STATE_KEY,
@@ -58,6 +60,13 @@ const Settings = ({ navigation }: Props) => {
       />
       <List.Item
         title='Chess'
+        description='Relax yourself with an intellectual PVP game of chess'
+        left={() => (
+          <Icon
+            iconName='shirt-outlinechess-knight'
+            iconComponentName='MaterialCommunityIcons'
+          />
+        )}
         right={() => (
           <Icon
             iconComponentName='Entypo'

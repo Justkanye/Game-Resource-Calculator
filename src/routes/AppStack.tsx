@@ -9,12 +9,12 @@ import { createSharedElementStackNavigator } from "react-navigation-shared-eleme
 import { FC, useEffect, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
+import { getInitialURL, openURL } from "expo-linking";
 
 import { Chess, Edit, Game, NotFound } from "../screens";
 import MainTabs from "./MainTabs";
 import { useSettings } from "../hooks";
 import { RootStackParamList } from "../types";
-import { getInitialURL, openURL } from "expo-linking";
 import { linking, NAVIGATION_STATE_KEY } from "../constants";
 
 const AppStackNav = createSharedElementStackNavigator<RootStackParamList>();
@@ -28,9 +28,14 @@ const AppStack: FC<Props> = ({ initialState }) => {
   const responseListener = useRef<Subscription>();
 
   useEffect(() => {
-    getInitialURL().then(url => {
-      url && openURL(url);
-    });
+    setTimeout(
+      () =>
+        getInitialURL().then(url => {
+          if (url) openURL(url);
+        }),
+      60
+    );
+
     notificationListener.current =
       Notifications.addNotificationReceivedListener(notification => {
         console.log({ notification });

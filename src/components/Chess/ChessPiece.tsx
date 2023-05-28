@@ -1,6 +1,9 @@
 import { Piece, Square, Chess, Move } from "chess.js";
 import { Dispatch, SetStateAction, useCallback } from "react";
-import { PanGestureHandler } from "react-native-gesture-handler";
+import {
+  PanGestureHandler,
+  TouchableWithoutFeedback,
+} from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
   useAnimatedGestureHandler,
@@ -9,8 +12,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { Vector } from "react-native-redash";
-import { CHESS_PIECE_MAP } from "../../constants";
 
+import { CHESS_PIECE_MAP } from "../../constants";
 import { toPosition, toTranslation } from "../../helpers";
 import { Icon } from "../../utils";
 
@@ -23,12 +26,18 @@ const ChessPiece = ({
   enabled,
   onTurn,
   promote,
+  availableMoves,
+  movePiece,
 }: Props) => {
   const offsetX = useSharedValue(0);
   const offsetY = useSharedValue(0);
   const translateX = useSharedValue(x);
   const translateY = useSharedValue(y);
-  const movePiece = useCallback((from: Square, to: Square) => {
+  const move = availableMoves.find(m => m.to === toPosition({ x, y }, size));
+  const isHighlighted = !!move;
+  const isKing = type === "k";
+  const isChecked = isKing && enabled && chess.inCheck();
+  const _movePiece = useCallback((from: Square, to: Square) => {
     const moves = chess
       .moves({ verbose: true })
       .filter(m => m.from === from && m.to === to);
@@ -79,23 +88,43 @@ const ChessPiece = ({
           { x: translateX.value, y: translateY.value },
           size
         );
-        runOnJS(movePiece)(from, to);
+        runOnJS(_movePiece)(from, to);
         if (from !== to) runOnJS(setAvailableMoves)([]);
       },
     },
     [translateX, translateY, offsetX, offsetX]
   );
+
   return (
     <PanGestureHandler onGestureEvent={handleGesture} enabled={enabled}>
       <Animated.View style={style}>
-        <Icon
-          onPress={enabled ? showMoves : undefined}
-          iconComponentName='MaterialCommunityIcons'
-          iconName={CHESS_PIECE_MAP[type]}
-          color={color === "b" ? "black" : "white"}
-          size={size * 0.7}
-          style={{ zIndex: 5, alignSelf: "center" }}
-        />
+        <TouchableWithoutFeedback
+          onPress={
+            isHighlighted
+              ? () => {
+                  if (move) movePiece(move.from, move.to);
+                }
+              : enabled
+              ? showMoves
+              : undefined
+          }
+          style={{
+            height: "100%",
+            backgroundColor: isChecked
+              ? "#834577"
+              : isHighlighted
+              ? "rgb(180,5,5)"
+              : "transparent",
+          }}
+        >
+          <Icon
+            iconComponentName='MaterialCommunityIcons'
+            iconName={CHESS_PIECE_MAP[type]}
+            color={color === "b" ? "black" : "white"}
+            size={size * 0.7}
+            style={{ zIndex: 5, alignSelf: "center" }}
+          />
+        </TouchableWithoutFeedback>
       </Animated.View>
     </PanGestureHandler>
   );
@@ -112,4 +141,6 @@ type Props = {
   enabled: boolean;
   onTurn: () => void;
   promote: (moves: Move[]) => void;
+  availableMoves: Move[];
+  movePiece: (from: Square, to: Square) => void;
 };

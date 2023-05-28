@@ -25,6 +25,7 @@ import { CHESS_PIECE_MAP } from "../constants";
 
 const allPromotions: PromotionPieceSymbol[] = ["b", "n", "q", "r"];
 const chess = new ChessJS();
+
 const Chess = ({ navigation }: Props) => {
   const [availableMoves, setAvailableMoves] = useState<Move[]>([]);
   const [chessFen, setChessFen] = useStore(s => [s.chessFen, s.setChessFen]);
@@ -123,7 +124,16 @@ const Chess = ({ navigation }: Props) => {
           return (
             <ChessPiece
               key={piece.square}
-              {...{ piece, size, chess, setAvailableMoves, onTurn, promote }}
+              {...{
+                piece,
+                size,
+                chess,
+                setAvailableMoves,
+                onTurn,
+                promote,
+                availableMoves,
+                movePiece,
+              }}
               position={{ x: j * size, y: i * size }}
               enabled={player === piece.color}
             />

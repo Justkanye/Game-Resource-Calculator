@@ -25,9 +25,8 @@ const ChessSquare = ({ row, col, availableMoves, movePiece }: SquareProps) => {
   const color = (col + offset) % 2 === 0 ? CHESS_WHITE : CHESS_BLACK;
   return (
     <TouchableWithoutFeedback
+      disabled={!isHighlighted}
       onPress={() => {
-        if (!isHighlighted) return;
-        console.log("move");
         if (move) movePiece(move.from, move.to);
       }}
     >

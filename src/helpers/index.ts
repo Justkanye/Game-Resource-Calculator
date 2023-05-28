@@ -117,7 +117,7 @@ export const formatParentname = (parentName: string) => {
  * Schedule a push notification
  * @param input
  */
-export async function schedulePushNotification(
+export const schedulePushNotification = async (
   input: NotificationRequestInput = {
     content: {
       title: "You've got mail! 📬",
@@ -126,7 +126,7 @@ export async function schedulePushNotification(
     },
     trigger: { seconds: 2 },
   }
-) {
+) => {
   try {
     await scheduleNotificationAsync(input);
   } catch (error) {

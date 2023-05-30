@@ -58,3 +58,5 @@ type Props = {
   onLongPress?: () => void;
   isTest?: boolean;
 };
+
+export { Props as IconProps };

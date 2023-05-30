@@ -28,9 +28,19 @@ const Settings = ({ navigation }: Props) => {
     <View style={styles.container}>
       <Title title='Settings' />
       <List.Item
-        left={() => <Icon iconName='shirt-outline' />}
+        left={({ color, style }) => (
+          <Icon
+            iconName='shirt-outline'
+            {...{ color }}
+            style={{
+              ...style,
+              alignSelf: "center",
+            }}
+          />
+        )}
         title='Change theme'
-        description={(theme ?? "light") + " mode"}
+        description={(theme ?? "light") + " theme"}
+        descriptionStyle={{ textTransform: "capitalize" }}
         onPress={toggleTheme}
         right={() => (
           <TouchableOpacity onPress={toggleTheme}>
@@ -46,7 +56,17 @@ const Settings = ({ navigation }: Props) => {
       />
       <List.Item
         title='Clear Onboarding State'
-        left={() => <Icon iconName='close-sharp' />}
+        left={({ color, style }) => (
+          <List.Icon
+            icon='cancel'
+            {...{ color }}
+            style={{
+              ...style,
+              alignSelf: "center",
+            }}
+          />
+        )}
+        description='Show onboarding on restart'
         onPress={() =>
           AsyncStorage.setItem(
             ONBOARDING_STATE_KEY,
@@ -58,24 +78,35 @@ const Settings = ({ navigation }: Props) => {
           )
         }
       />
-      <List.Item
-        title='Chess'
-        description='Relax yourself with an intellectual PVP game of chess'
-        left={() => (
-          <Icon
-            iconName='shirt-outlinechess-knight'
-            iconComponentName='MaterialCommunityIcons'
-          />
-        )}
-        right={() => (
-          <Icon
-            iconComponentName='Entypo'
-            iconName='chevron-right'
-            color={theme === "dark" ? "#fff" : "#000"}
-          />
-        )}
-        onPress={() => navigation.navigate("Chess")}
-      />
+      <List.Section>
+        <List.Subheader>Games & Extra</List.Subheader>
+        <List.Item
+          title='Chess'
+          description='Relax yourself with an intellectual PVP game of chess'
+          left={({ color, style }) => (
+            <List.Icon
+              icon='chess-knight'
+              {...{ color }}
+              style={{
+                ...style,
+                alignSelf: "center",
+              }}
+            />
+          )}
+          right={({ color, style }) => (
+            <Icon
+              iconComponentName='Entypo'
+              iconName='chevron-right'
+              {...{ color }}
+              style={{
+                ...style,
+                alignSelf: "center",
+              }}
+            />
+          )}
+          onPress={() => navigation.navigate("Chess")}
+        />
+      </List.Section>
     </View>
   );
 };

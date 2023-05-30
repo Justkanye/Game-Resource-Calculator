@@ -3,23 +3,22 @@ import {
   createMaterialBottomTabNavigator,
   MaterialBottomTabNavigationOptions,
 } from "@react-navigation/material-bottom-tabs";
-import { useTheme } from "react-native-paper";
 
 import { Games, Add, Settings } from "../screens";
-import { Icon } from "../utils";
 import { MainTabParamList } from "../types";
+import { AnimatedTabBarIcon } from "../components";
+import { useState } from "react";
 
 const MainTab = createMaterialBottomTabNavigator<MainTabParamList>();
 
 const MainTabs = () => {
-  const { colors } = useTheme();
+  const [current, setCurrent] = useState<string>();
 
   const screenOptions = ({
     route,
   }: ScreenOptionsProps): MaterialBottomTabNavigationOptions => ({
-    tabBarIcon: ({ color = colors.accent }) => {
+    tabBarIcon: ({ color }) => {
       let iconName = "game-controller";
-      let iconComponentName;
       switch (route.name) {
         case "Add":
           iconName = "add-circle";
@@ -32,12 +31,10 @@ const MainTabs = () => {
       }
 
       return (
-        <Icon
-          iconName={iconName}
-          color={color}
-          size={25}
-          iconComponentName={iconComponentName}
-          onPress={() => console.log("pressed")}
+        <AnimatedTabBarIcon
+          iconProps={{ color, iconName, size: 25 }}
+          animate={current === route.name}
+          rotate={iconName !== "game-controller"}
         />
       );
     },
@@ -46,11 +43,11 @@ const MainTabs = () => {
   return (
     <MainTab.Navigator
       initialRouteName='Games'
-      // screenListeners={{
-      //   tabPress: ({ target }) => {
-      //     console.log({ target });
-      //   },
-      // }}
+      screenListeners={{
+        tabPress: ({ target }) => {
+          setCurrent(target?.split("-")[0]);
+        },
+      }}
       screenOptions={screenOptions}
     >
       <MainTab.Screen name='Games' component={Games} />

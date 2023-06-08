@@ -34,7 +34,7 @@ const MainTabs = () => {
         <AnimatedTabBarIcon
           iconProps={{ color, iconName, size: 25 }}
           animate={current === route.name}
-          rotate={iconName !== "game-controller"}
+          rotate={route.name !== "Games"}
         />
       );
     },
